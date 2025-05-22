@@ -8,6 +8,7 @@ const path = require("path");
 dotenv.config();
 
 const app = express();
+app.use(cors());
 
 const swaggerDocument = YAML.load(
   path.join(__dirname, "..", "docs", "openapi.yaml")
@@ -25,7 +26,6 @@ const contactosRoutes = require("./routes/contactos.routes");
 const sucursalesRoutes = require("./routes/sucursales.route");
 const vendedoresRoutes = require("./routes/vendedores.route");
 
-app.use(cors());
 app.use(express.json());
 app.use("/api/pedidos", pedidosRoutes);
 app.use("/api", pagoRoutes);
