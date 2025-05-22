@@ -17,25 +17,25 @@ FERREMAS es una API RESTful diseñada para gestionar el catálogo, pedidos y ope
 
 ## 📦 Estructura del proyecto
 
-´´´
+```plaintext
 ferremas-backend/
 │
 ├── src/
-│ ├── controllers/
-│ ├── routes/
-│ ├── middlewares/
-│ ├── data/
-│ ├── services/
-│ └── index.js
+│   ├── controllers/
+│   ├── routes/
+│   ├── middlewares/
+│   ├── data/
+│   ├── services/
+│   └── index.js
 │
 ├── docs/
-│ └── openapi.yaml
+│   └── openapi.yaml
 │
 ├── .env
 ├── .gitignore
 ├── README.md
 └── package.json
-´´´
+```
 
 ---
 
@@ -73,3 +73,30 @@ ferremas-backend/
 | GET    | `/api/contactos`               | Obtener mensajes de contacto              | Admin / Vendedor |
 | GET    | `/api/moneda/dolar`            | Obtener valor actual del dólar            | Público          |
 | POST   | `/api/pago`                    | Crear pago con Stripe                     | Autenticado      |
+
+---
+
+## 📘 Documentación
+
+La documentación Swagger está disponible en:  
+➡️ [`/api-docs`](http://localhost:3000/api-docs) (modo local)  
+➡️ [`https://ferremas-backend-production.up.railway.app/api-docs`](https://ferremas-backend-production.up.railway.app/api-docs) (producción)
+
+---
+
+## 🧪 Cómo correr el proyecto
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/tu-usuario/ferremas-backend.git
+cd ferremas-backend
+
+# Instalar dependencias
+npm install
+
+# Crear archivo de entorno
+cp .env.example .env
+
+# Ejecutar en modo desarrollo
+npm run dev
+```
