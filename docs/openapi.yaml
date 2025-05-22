@@ -5,8 +5,8 @@ info:
   version: "1.0.0"
 
 servers:
-  - url: http://localhost:3000/api
-    description: Desarrollo local
+  - url: ferremas-backend-production.up.railway.app
+    description: Producción
 
 components:
   securitySchemes:
