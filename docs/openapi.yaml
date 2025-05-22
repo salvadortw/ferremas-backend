@@ -1,0 +1,478 @@
+openapi: 3.0.3
+info:
+  title: API FERREMAS
+  description: API REST para la gestión de ferretería FERREMAS, incluye autenticación, pedidos, productos, vendedores, sucursales y conversión de divisas.
+  version: "1.0.0"
+
+servers:
+  - url: http://localhost:3000/api
+    description: Desarrollo local
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Producto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: Taladro inalámbrico
+        precio:
+          type: number
+          format: float
+          example: 34990.50
+        novedad:
+          type: boolean
+          example: false
+        promocion:
+          type: boolean
+          example: true
+
+    Sucursal:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: Sucursal Centro
+        direccion:
+          type: string
+          example: Calle Falsa 123
+
+    Vendedor:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: Juan Pérez
+        sucursalId:
+          type: integer
+          example: 1
+
+    Pedido:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        cliente:
+          type: string
+          example: Javier Thompson
+        productos:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 2
+              cantidad:
+                type: integer
+                example: 3
+        estado:
+          type: string
+          example: pendiente
+        fecha:
+          type: string
+          format: date-time
+          example: "2025-05-20T10:00:00Z"
+
+    Contacto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        cliente:
+          type: string
+          example: Ignacio Tapia
+        mensaje:
+          type: string
+          example: Quiero contactarme con un vendedor.
+        fecha:
+          type: string
+          format: date-time
+          example: "2025-05-21T12:00:00Z"
+
+    ConversionDivisas:
+      type: object
+      properties:
+        montoCLP:
+          type: number
+          example: 1000
+        montoUSD:
+          type: number
+          example: 1.23
+        valorDolar:
+          type: number
+          example: 810.50
+
+security:
+  - BearerAuth: []
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Autenticación
+      summary: Iniciar sesión y obtener token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: thompson
+                password:
+                  type: string
+                  example: 1234
+      responses:
+        "200":
+          description: Token JWT generado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJI...
+        "401":
+          description: Credenciales inválidas
+
+  /productos:
+    get:
+      tags:
+        - Productos
+      summary: Obtener catálogo completo de productos
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Lista de productos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Producto"
+
+  /productos/{id}:
+    get:
+      tags:
+        - Productos
+      summary: Obtener producto por ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID del producto
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Producto encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Producto"
+        "404":
+          description: Producto no encontrado
+
+  /sucursales:
+    get:
+      tags:
+        - Sucursales
+      summary: Obtener listado de sucursales
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Lista de sucursales
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Sucursal"
+
+  /vendedores/sucursal/{id}:
+    get:
+      tags:
+        - Vendedores
+      summary: Obtener listado de vendedores por sucursal
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID de la sucursal
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Lista de vendedores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vendedor"
+
+  /vendedores/{id}:
+    get:
+      tags:
+        - Vendedores
+      summary: Obtener vendedor por ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID del vendedor
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Vendedor encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vendedor"
+        "404":
+          description: Vendedor no encontrado
+
+  /productos/novedades/listado:
+    get:
+      tags:
+        - Productos
+      summary: Obtener productos marcados como novedades
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Lista de productos novedades
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Producto"
+
+  /productos/promociones/listado:
+    get:
+      tags:
+        - Productos
+      summary: Obtener productos marcados como promoción
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Lista de productos en promoción
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Producto"
+
+  /pedidos:
+    get:
+      tags:
+        - Pedidos
+      summary: Obtener todos los pedidos
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Lista de pedidos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Pedido"
+    post:
+      tags:
+        - Pedidos
+      summary: Crear nuevo pedido monoproducto
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cliente
+                - productos
+              properties:
+                cliente:
+                  type: string
+                  example: Javier Thompson
+                productos:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      cantidad:
+                        type: integer
+                        example: 2
+                estado:
+                  type: string
+                  example: pendiente
+      responses:
+        "201":
+          description: Pedido creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pedido"
+        "400":
+          description: Datos inválidos o incompletos
+
+  /contactos:
+    get:
+      tags:
+        - Contactos
+      summary: Obtener solicitudes de contacto (admin y vendedor)
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Lista de solicitudes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Contacto"
+    post:
+      tags:
+        - Contactos
+      summary: Crear solicitud de contacto
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cliente
+                - clienteId
+                - mensaje
+              properties:
+                cliente:
+                  type: string
+                  example: Ignacio Tapia
+                clienteId:
+                  type: number
+                  example: 2
+                mensaje:
+                  type: string
+                  example: Quiero contactar con un vendedor.
+      responses:
+        "201":
+          description: Solicitud creada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contacto"
+        "400":
+          description: Datos inválidos
+
+  /moneda/dolar:
+    get:
+      tags:
+        - Divisas
+      summary: Obtener valor actual del dólar (desde microservicio BBCh)
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Valor del dólar
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valor_dolar:
+                    type: number
+                    example: 810.5
+
+  /moneda/clp-a-usd/{monto}:
+    get:
+      tags:
+        - Divisas
+      summary: Convertir monto CLP a USD
+      parameters:
+        - in: path
+          name: monto
+          schema:
+            type: number
+          required: true
+          description: Monto en pesos chilenos (CLP)
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Resultado conversión CLP a USD
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConversionDivisas"
+        "400":
+          description: Monto inválido
+
+  /moneda/usd-a-clp/{monto}:
+    get:
+      tags:
+        - Divisas
+      summary: Convertir monto USD a CLP
+      parameters:
+        - in: path
+          name: monto
+          schema:
+            type: number
+          required: true
+          description: Monto en dólares estadounidenses (USD)
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Resultado conversión USD a CLP
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConversionDivisas"
+        "400":
+          description: Monto inválido
