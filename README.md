@@ -80,7 +80,7 @@ ferremas-backend/
 
 La documentación Swagger está disponible en:  
 ➡️ [`/api-docs`](http://localhost:3000/api-docs) (modo local)  
-➡️ [`https://ferremas-backend-production.up.railway.app/api-docs`](https://ferremas-backend-production.up.railway.app/api-docs) (producción)
+➡️ [`https://ferremas-backend-production.up.railway.app/api-docs`](https://ferremas-backend-production.up.railway.app/api-docs) (producción) **No disponible**
 
 ---
 
@@ -88,7 +88,7 @@ La documentación Swagger está disponible en:
 
 ```bash
 # Clonar el repositorio
-git clone https://github.com/tu-usuario/ferremas-backend.git
+git clone https://github.com/salvadortw/ferremas-backend.git
 cd ferremas-backend
 
 # Instalar dependencias
